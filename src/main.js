@@ -21,30 +21,36 @@ refs.formEl.addEventListener('submit', async e => {
 
   console.log('Запрос пользователя:', userValue);
   console.log('Длина запроса:', userValue.length);
+  refs.galleryContainer.innerHTML = '';
 
   if (!userValue || userValue.length === 0) {
     iziToast.error({
       title: 'Ошибка',
       message: 'Введите запрос для поиска!',
-      position: 'topRight',
+      position: 'topCenter',
     });
+    e.target.elements.query.value = '';
+    // e.target.reset();
     return;
   }
   refs.loader.hidden = false;
+  // refs.galleryContainer.innerHTML = '';
   try {
-    await new Promise(resolve => setTimeout(resolve, 1000));
     const { hits } = await searchPicture(userValue);
     if (!hits || hits.length === 0) {
+      refs.galleryContainer.innerHTML = '';
       iziToast.warning({
         message:
           'Sorry, there are no images matching your search query. Please try again!',
         position: 'topCenter',
       });
+      e.target.elements.query.value = '';
       return;
     }
     renderPicture(hits);
   } catch (error) {
     console.error('Ошибка запроса:', error);
+    refs.galleryContainer.innerHTML = '';
   } finally {
     refs.loader.hidden = true;
   }
